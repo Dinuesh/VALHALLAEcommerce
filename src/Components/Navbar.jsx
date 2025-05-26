@@ -9,7 +9,6 @@ const sections = [
 ];
 
 const Navbar = () => {
-  // Default active: pehla section selected rahe
   const [selectedImg, setSelectedImg] = useState(sections[0].img);
 
   return (
@@ -19,6 +18,7 @@ const Navbar = () => {
           selectedImg ? "bg-white" : "bg-gray-100"
         } max-w-full sm:max-w-5xl`}
       >
+        {/* Nav buttons */}
         <nav className="mb-6">
           <div className="flex justify-center flex-wrap gap-2 sm:gap-4">
             {sections.map((section, index) => (
@@ -39,13 +39,19 @@ const Navbar = () => {
           </div>
         </nav>
 
+        {/* Image with overlayed "View More" */}
         {selectedImg && (
-          <div className="mt-4 flex justify-center">
+          <div className="relative mt-4 flex justify-center">
             <img
               src={selectedImg}
               alt="Selected"
               className="w-full max-w-full sm:max-w-[800px] h-auto rounded object-cover"
             />
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+              <button className="bg-black bg-opacity-70 text-white px-10 py-2 rounded hover:bg-opacity-90 transition">
+                View More
+              </button>
+            </div>
           </div>
         )}
       </div>
