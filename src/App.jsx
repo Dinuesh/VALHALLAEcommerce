@@ -8,7 +8,6 @@ import HeroSection from './Components/HeroSection'
 import SlidingGallery from './Components/SlidingGallery/SlidingGallery'
 import Hero from './Components/Desktop1/Hero'
 import Header from './Components/Desktop1/Header'
-import ImageSlider from './Components/ImageSlider'
 
 
 const App = () => {
@@ -18,7 +17,6 @@ const App = () => {
       <Header />
       <Hero />
       <Navbar />
-      <ImageSlider/>
       <Before />
       <GalleryTabs />
       <SlidingGallery />
