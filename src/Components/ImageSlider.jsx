@@ -9,8 +9,8 @@ import React, {
 
 const allImages = [
   '/images/s1.jpeg', '/images/s2.jpeg', '/images/s3.jpeg', '/images/s4.jpeg', '/images/s5.jpeg',
-  '/images/s1.jpeg', '/images/s2.jpeg', '/images/s3.jpeg', '/images/s4.jpeg', '/images/s5.jpeg',
-  '/images/s1.jpeg', '/images/s2.jpeg', '/images/s3.jpeg', '/images/s4.jpeg', '/images/s5.jpeg',
+  '/images/s6.jpeg', '/images/s7.jpeg', '/images/s8.jpeg', '/images/s9.jpeg', '/images/s10.jpeg',
+  '/images/s11.jpeg', '/images/s12.jpeg', '/images/s13.jpeg', '/images/s14.jpeg', '/images/s15.jpeg',
 ];
 
 const slider1Images = allImages.slice(0, 5);
@@ -57,7 +57,7 @@ const SingleSlider = forwardRef(({ images, showLeft, showRight, onPrev, onNext }
   }, [current]);
 
   useEffect(() => {
-    setDividerX(50); // Initial center
+    setDividerX(50);
   }, []);
 
   const handleScroll = () => {
@@ -132,7 +132,6 @@ const SingleSlider = forwardRef(({ images, showLeft, showRight, onPrev, onNext }
             <div className="absolute inset-0 select-none">
               <div className="absolute top-0 left-0 h-full bg-black" style={{ width: `${dividerX}%`, opacity: 0.3 }} />
               <div className="absolute top-0 right-0 h-full bg-black" style={{ width: `${100 - dividerX}%`, opacity: 0.6 }} />
-              {/* Always-visible draggable vertical divider */}
               <div
                 className="absolute top-0 h-full z-20 cursor-col-resize flex items-center justify-center"
                 style={{ left: `${dividerX}%`, transform: 'translateX(-50%)' }}
