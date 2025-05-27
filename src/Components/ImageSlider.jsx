@@ -1,21 +1,10 @@
-import React, { useRef, useState, useEffect } from 'react';
+'use client';
+import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 
 const allImages = [
-  '/images/s1.jpeg',
-  '/images/s2.jpeg',
-  '/images/s3.jpeg',
-  '/images/s4.jpeg',
-  '/images/s5.jpeg',
-  '/images/s1.jpeg',
-  '/images/s2.jpeg',
-  '/images/s3.jpeg',
-  '/images/s4.jpeg',
-  '/images/s5.jpeg',
-  '/images/s1.jpeg',
-  '/images/s2.jpeg',
-  '/images/s3.jpeg',
-  '/images/s4.jpeg',
-  '/images/s5.jpeg',
+  '/images/s1.jpeg', '/images/s2.jpeg', '/images/s3.jpeg', '/images/s4.jpeg', '/images/s5.jpeg',
+  '/images/s1.jpeg', '/images/s2.jpeg', '/images/s3.jpeg', '/images/s4.jpeg', '/images/s5.jpeg',
+  '/images/s1.jpeg', '/images/s2.jpeg', '/images/s3.jpeg', '/images/s4.jpeg', '/images/s5.jpeg',
 ];
 
 const slider1Images = allImages.slice(0, 5);
@@ -34,7 +23,7 @@ const RightArrowIcon = () => (
   </svg>
 );
 
-const SingleSlider = ({ images }) => {
+const SingleSlider = forwardRef(({ images, showLeft, showRight, onPrev, onNext }, ref) => {
   const extendedImages = [images[images.length - 1], ...images, images[0]];
   const [current, setCurrent] = useState(1);
   const [dividerX, setDividerX] = useState(50);
@@ -42,6 +31,17 @@ const SingleSlider = ({ images }) => {
   const containerRef = useRef(null);
   const timeoutRef = useRef(null);
   const dragging = useRef(false);
+
+  useImperativeHandle(ref, () => ({
+    scrollToIndex: (index) => {
+      if (scrollRef.current) {
+        const width = scrollRef.current.clientWidth;
+        scrollRef.current.scrollTo({ left: width * index, behavior: 'smooth' });
+        setCurrent(index);
+      }
+    },
+    getCurrent: () => current,
+  }));
 
   useEffect(() => {
     const container = scrollRef.current;
@@ -98,7 +98,6 @@ const SingleSlider = ({ images }) => {
     document.removeEventListener('mouseup', handleMouseUp);
   };
 
-  // Touch support for dragging
   const handleTouchMove = (e) => {
     if (!dragging.current || !containerRef.current) return;
     const touch = e.touches[0];
@@ -120,15 +119,8 @@ const SingleSlider = ({ images }) => {
     document.removeEventListener('touchend', handleTouchEnd);
   };
 
-  const next = () => setCurrent((prev) => prev + 1);
-  const prev = () => setCurrent((prev) => prev - 1);
-
   return (
-    <div
-      className="relative w-full max-w-md mx-auto mb-6 md:mb-0 md:mx-4"
-      ref={containerRef}
-      style={{ touchAction: 'none' }} // Helps touch dragging
-    >
+    <div className="relative w-full max-w-md mx-auto mb-6 md:mb-0 md:mx-4" ref={containerRef}>
       <div
         ref={scrollRef}
         onScroll={handleScroll}
@@ -136,20 +128,11 @@ const SingleSlider = ({ images }) => {
         style={{ scrollSnapType: 'x mandatory', scrollBehavior: 'smooth' }}
       >
         {extendedImages.map((src, i) => (
-          <div
-            key={i}
-            className="relative flex-shrink-0 w-full h-64 md:h-72 lg:h-80 scroll-snap-align-start"
-          >
+          <div key={i} className="relative flex-shrink-0 w-full h-64 md:h-72 lg:h-80 scroll-snap-align-start">
             <img src={src} alt={`Slide ${i}`} className="w-full h-full object-cover" draggable={false} />
             <div className="absolute inset-0 select-none">
-              <div
-                className="absolute top-0 left-0 h-full bg-black"
-                style={{ width: `${dividerX}%`, opacity: 0.3 }}
-              />
-              <div
-                className="absolute top-0 right-0 h-full bg-black"
-                style={{ width: `${100 - dividerX}%`, opacity: 0.6 }}
-              />
+              <div className="absolute top-0 left-0 h-full bg-black" style={{ width: `${dividerX}%`, opacity: 0.3 }} />
+              <div className="absolute top-0 right-0 h-full bg-black" style={{ width: `${100 - dividerX}%`, opacity: 0.6 }} />
               <div
                 className="absolute top-0 h-full w-0.5 bg-white z-10 cursor-col-resize"
                 style={{ left: `${dividerX}%`, transform: 'translateX(-50%)' }}
@@ -161,37 +144,45 @@ const SingleSlider = ({ images }) => {
         ))}
       </div>
 
-      <button
-        onClick={prev}
-        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/60 text-white p-2 rounded-full z-20"
-        aria-label="Previous Slide"
-      >
-        <LeftArrowIcon />
-      </button>
-      <button
-        onClick={next}
-        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/60 text-white p-2 rounded-full z-20"
-        aria-label="Next Slide"
-      >
-        <RightArrowIcon />
-      </button>
+      {showLeft && (
+        <button onClick={onPrev} className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/60 text-white p-2 rounded-full z-20">
+          <LeftArrowIcon />
+        </button>
+      )}
+      {showRight && (
+        <button onClick={onNext} className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/60 text-white p-2 rounded-full z-20">
+          <RightArrowIcon />
+        </button>
+      )}
     </div>
   );
-};
+});
 
 const ImageSlider = () => {
+  const sliderRefs = [useRef(), useRef(), useRef()];
+
+  const scrollToAll = (dir) => {
+    const currentIndex = sliderRefs[0].current?.getCurrent() || 1;
+    const newIndex = dir === 'prev' ? currentIndex - 1 : currentIndex + 1;
+    sliderRefs.forEach((ref) => {
+      if (ref.current) {
+        ref.current.scrollToIndex(newIndex);
+      }
+    });
+  };
+
   return (
     <div className="flex flex-col md:flex-row mt-2 pt-5 pb-5 justify-center items-center">
-      {/* Mobile only: show just first slider */}
+      {/* Only on mobile */}
       <div className="block md:hidden w-full max-w-md">
-        <SingleSlider images={slider1Images} />
+        <SingleSlider ref={sliderRefs[0]} images={slider1Images} showLeft showRight onPrev={() => scrollToAll('prev')} onNext={() => scrollToAll('next')} />
       </div>
 
-      {/* Tablet+ show all sliders side by side */}
+      {/* Desktop: all 3 sliders side-by-side */}
       <div className="hidden md:flex md:space-x-4">
-        <SingleSlider images={slider1Images} />
-        <SingleSlider images={slider2Images} />
-        <SingleSlider images={slider3Images} />
+        <SingleSlider ref={sliderRefs[0]} images={slider1Images} showLeft onPrev={() => scrollToAll('prev')} />
+        <SingleSlider ref={sliderRefs[1]} images={slider2Images} />
+        <SingleSlider ref={sliderRefs[2]} images={slider3Images} showRight onNext={() => scrollToAll('next')} />
       </div>
     </div>
   );

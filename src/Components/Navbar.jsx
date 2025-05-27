@@ -9,9 +9,8 @@ const sections = [
 ];
 
 const Navbar = () => {
-  const [selectedIndex, setSelectedIndex] = useState(0); // pehla button by default active
+  const [selectedIndex, setSelectedIndex] = useState(0); // Show first section by default
 
-  // Toggle function - ab same button pe click se close nahi hoga
   const toggleIndex = (index) => {
     setSelectedIndex(index);
   };
@@ -19,7 +18,7 @@ const Navbar = () => {
   return (
     <div className="min-h-screen bg-white p-4 sm:p-6 flex flex-col items-center justify-center">
       <div className="border border-gray-400 rounded-lg p-4 sm:p-6 shadow-xl max-w-full sm:max-w-5xl w-full">
-        {/* Nav buttons desktop horizontal, mobile accordion */}
+        {/* Nav buttons */}
         <nav className="mb-6">
           {/* Desktop horizontal buttons */}
           <div className="hidden sm:flex justify-center flex-wrap gap-4">
@@ -40,7 +39,7 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Mobile accordion */}
+          {/* Mobile accordion buttons */}
           <div className="sm:hidden flex flex-col gap-2">
             {sections.map((section, index) => (
               <div key={index} className="w-full">
@@ -63,11 +62,6 @@ const Navbar = () => {
                       alt={section.name}
                       className="w-full h-auto object-cover rounded"
                     />
-                    <div className="flex justify-center mt-2">
-                      <button className="bg-black bg-opacity-70 text-white px-6 py-2 rounded hover:bg-opacity-90 transition">
-                        View More
-                      </button>
-                    </div>
                   </div>
                 )}
               </div>
@@ -75,19 +69,14 @@ const Navbar = () => {
           </div>
         </nav>
 
-        {/* Desktop image below buttons */}
+        {/* Desktop image display below nav buttons */}
         {selectedIndex !== null && (
-          <div className="hidden sm:flex justify-center relative mt-4">
+          <div className="hidden sm:flex justify-center mt-4">
             <img
               src={sections[selectedIndex].img}
               alt={sections[selectedIndex].name}
               className="w-full max-w-[800px] h-auto rounded object-cover"
             />
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-              <button className="bg-black bg-opacity-70 text-white px-10 py-2 rounded hover:bg-opacity-90 transition">
-                View More
-              </button>
-            </div>
           </div>
         )}
       </div>
