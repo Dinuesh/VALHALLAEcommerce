@@ -9,7 +9,6 @@ import SlidingGallery from './Components/SlidingGallery/SlidingGallery'
 import Hero from './Components/Desktop1/Hero'
 import Header from './Components/Desktop1/Header'
 import ImageSlider from './Components/ImageSlider'
-// import GalleryTabs from './Components/Gallery/GalleryTabs'
 
 
 const App = () => {
@@ -22,7 +21,6 @@ const App = () => {
       <Navbar />
       <Before />
       <GalleryTabs />
-      {/* <GalleryTabs/> */}
       <SlidingGallery />
       <RastaGallery />
       <UserRegistration />

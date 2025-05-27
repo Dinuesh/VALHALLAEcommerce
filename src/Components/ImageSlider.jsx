@@ -1,5 +1,11 @@
 'use client';
-import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle } from 'react';
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  forwardRef,
+  useImperativeHandle,
+} from 'react';
 
 const allImages = [
   '/images/s1.jpeg', '/images/s2.jpeg', '/images/s3.jpeg', '/images/s4.jpeg', '/images/s5.jpeg',
@@ -44,12 +50,16 @@ const SingleSlider = forwardRef(({ images, showLeft, showRight, onPrev, onNext }
   }));
 
   useEffect(() => {
-    const container = scrollRef.current;
-    if (container) {
-      const width = container.clientWidth;
-      container.scrollTo({ left: width * current, behavior: 'smooth' });
+    if (scrollRef.current) {
+      const width = scrollRef.current.clientWidth;
+      scrollRef.current.scrollTo({ left: width * current, behavior: 'smooth' });
     }
   }, [current]);
+
+  useEffect(() => {
+    // Auto set divider to center initially
+    setDividerX(50);
+  }, []);
 
   const handleScroll = () => {
     clearTimeout(timeoutRef.current);
@@ -173,12 +183,19 @@ const ImageSlider = () => {
 
   return (
     <div className="flex flex-col md:flex-row mt-2 pt-5 pb-5 justify-center items-center">
-      {/* Only on mobile */}
+      {/* Mobile view */}
       <div className="block md:hidden w-full max-w-md">
-        <SingleSlider ref={sliderRefs[0]} images={slider1Images} showLeft showRight onPrev={() => scrollToAll('prev')} onNext={() => scrollToAll('next')} />
+        <SingleSlider
+          ref={sliderRefs[0]}
+          images={slider1Images}
+          showLeft
+          showRight
+          onPrev={() => scrollToAll('prev')}
+          onNext={() => scrollToAll('next')}
+        />
       </div>
 
-      {/* Desktop: all 3 sliders side-by-side */}
+      {/* Desktop view */}
       <div className="hidden md:flex md:space-x-4">
         <SingleSlider ref={sliderRefs[0]} images={slider1Images} showLeft onPrev={() => scrollToAll('prev')} />
         <SingleSlider ref={sliderRefs[1]} images={slider2Images} />
