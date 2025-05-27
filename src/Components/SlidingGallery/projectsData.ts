@@ -1,4 +1,6 @@
-export interface ProjectData {
+// projectsData.ts
+
+export interface ProjectData { 
   id: number;
   title: string;
   category: string;
