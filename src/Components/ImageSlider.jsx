@@ -57,8 +57,7 @@ const SingleSlider = forwardRef(({ images, showLeft, showRight, onPrev, onNext }
   }, [current]);
 
   useEffect(() => {
-    // Auto set divider to center initially
-    setDividerX(50);
+    setDividerX(50); // Initial center
   }, []);
 
   const handleScroll = () => {
@@ -88,41 +87,31 @@ const SingleSlider = forwardRef(({ images, showLeft, showRight, onPrev, onNext }
     }, 100);
   };
 
-  const handleMouseMove = (e) => {
-    if (!dragging.current || !containerRef.current) return;
+  const updateDivider = (clientX) => {
     const rect = containerRef.current.getBoundingClientRect();
-    let newX = ((e.clientX - rect.left) / rect.width) * 100;
+    let newX = ((clientX - rect.left) / rect.width) * 100;
     newX = Math.max(0, Math.min(newX, 100));
     setDividerX(newX);
   };
 
+  const handleMouseMove = (e) => dragging.current && updateDivider(e.clientX);
   const handleMouseDown = () => {
     dragging.current = true;
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
   };
-
   const handleMouseUp = () => {
     dragging.current = false;
     document.removeEventListener('mousemove', handleMouseMove);
     document.removeEventListener('mouseup', handleMouseUp);
   };
 
-  const handleTouchMove = (e) => {
-    if (!dragging.current || !containerRef.current) return;
-    const touch = e.touches[0];
-    const rect = containerRef.current.getBoundingClientRect();
-    let newX = ((touch.clientX - rect.left) / rect.width) * 100;
-    newX = Math.max(0, Math.min(newX, 100));
-    setDividerX(newX);
-  };
-
+  const handleTouchMove = (e) => dragging.current && updateDivider(e.touches[0].clientX);
   const handleTouchStart = () => {
     dragging.current = true;
     document.addEventListener('touchmove', handleTouchMove);
     document.addEventListener('touchend', handleTouchEnd);
   };
-
   const handleTouchEnd = () => {
     dragging.current = false;
     document.removeEventListener('touchmove', handleTouchMove);
@@ -143,24 +132,32 @@ const SingleSlider = forwardRef(({ images, showLeft, showRight, onPrev, onNext }
             <div className="absolute inset-0 select-none">
               <div className="absolute top-0 left-0 h-full bg-black" style={{ width: `${dividerX}%`, opacity: 0.3 }} />
               <div className="absolute top-0 right-0 h-full bg-black" style={{ width: `${100 - dividerX}%`, opacity: 0.6 }} />
+              {/* Always-visible draggable vertical divider */}
               <div
-                className="absolute top-0 h-full w-0.5 bg-white z-10 cursor-col-resize"
+                className="absolute top-0 h-full z-20 cursor-col-resize flex items-center justify-center"
                 style={{ left: `${dividerX}%`, transform: 'translateX(-50%)' }}
                 onMouseDown={handleMouseDown}
                 onTouchStart={handleTouchStart}
-              />
+              >
+                <div className="w-1 bg-white h-full" />
+                <div className="absolute top-1/2 transform -translate-y-1/2 w-6 h-6 bg-white text-black rounded-full shadow-md flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 12h16" />
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
         ))}
       </div>
 
       {showLeft && (
-        <button onClick={onPrev} className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/60 text-white p-2 rounded-full z-20">
+        <button onClick={onPrev} className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/60 text-white p-2 rounded-full z-30">
           <LeftArrowIcon />
         </button>
       )}
       {showRight && (
-        <button onClick={onNext} className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/60 text-white p-2 rounded-full z-20">
+        <button onClick={onNext} className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/60 text-white p-2 rounded-full z-30">
           <RightArrowIcon />
         </button>
       )}
